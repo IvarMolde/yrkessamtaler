@@ -26,7 +26,7 @@ module.exports = async (req, res) => {
 
     // Start modellen - Vi prøver "gemini-pro" igjen
     // Nå som Vertex AI er aktivert, bør denne fungere.
-    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
     // Lag en "samtale" med riktig personlighet
     const chat = model.startChat({
