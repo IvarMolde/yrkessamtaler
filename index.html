@@ -1,1 +1,34 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <title>Snakk med et Yrke</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Velg et yrke å snakke med</h1>
 
+    <div class="yrke-grid">
+        <div class="yrke-kort" data-yrke="snekker">
+            <img src="https://images.pexels.com/photos/8005396/pexels-photo-8005396.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Snekker">
+            <span>Snekker</span>
+        </div>
+        <div class="yrke-kort" data-yrke="lege">
+            <img src="https://images.pexels.com/photos/356040/pexels-photo-356040.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Lege">
+            <span>Lege</span>
+        </div>
+        </div>
+
+    <div id="chat-container" class="skjult">
+        <h2 id="chat-tittel">...</h2>
+        <div id="chat-logg"></div>
+        <div class="input-felt">
+            <input type="text" id="chat-input" placeholder="Skriv meldingen din...">
+            <button id="send-knapp">Send</button>
+        </div>
+        <button id="tilbake-knapp">Tilbake til yrker</button>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
