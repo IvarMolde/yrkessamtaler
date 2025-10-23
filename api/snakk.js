@@ -29,7 +29,7 @@ module.exports = async (req, res) => {
     const systemPrompt = yrkePrompts[yrke] || "Du er en hjelpsom assistent.";
 
     // Start modellen
-  const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+  const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro-latest" });
     
     // Lag en "samtale" med riktig personlighet
     const chat = model.startChat({
