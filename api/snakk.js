@@ -1,33 +1,54 @@
-// TEMPORÆR FEILSØKINGS-KODE
+// Importer Google AI-pakken
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
-// Hent nøkkelen
+// Hent den hemmelige nøkkelen Vercel har lagret
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
 
+// Definer personlighetene
+const yrkePrompts = {
+  snekker: "Du er en vennlig snekker i Norge. Svar kort og enkelt på norsk. Ikke si du er en AI.",
+  lege: "Du er en omsorgsfull lege i Norge. Svar kort og enkelt på norsk. Ikke si du er en AI.",
+  // Legg til flere yrker her
+};
+
+// Dette er selve vaktmester-funksjonen
 module.exports = async (req, res) => {
   try {
-    // Denne koden starter ikke en chat.
-    // Den spør Google: "Hvilke modeller har du?"
-    console.log("Forsøker å liste modeller...");
+    const body = req.body || {};
+    const { yrke, melding } = body;
 
-    const modelInfo = await genAI.listModels();
-    const models = modelInfo.models; // Hent ut listen
-
-    // Lag en enkel tekstliste av modellene
-    let modellListe = "Gratulerer! Betalingen fungerer!\n\nTilgjengelige modeller:\n";
-    for (const m of models) {
-      // Vi vil bare se "generative" modeller
-      if (m.name.includes("models/")) {
-         modellListe += `\n- ${m.name}`;
-      }
+    if (!yrke || !melding) {
+      return res.status(400).json({ error: "Mangler yrke eller melding" });
     }
 
-    // Send denne listen som et "svar"
-    res.status(200).json({ svar: modellListe });
+    // Velg riktig personlighet
+    const systemPrompt = yrkePrompts[yrke] || "Du er en hjelpsom assistent.";
+
+    // Start modellen - Vi prøver "gemini-pro" igjen
+    // Nå som Vertex AI er aktivert, bør denne fungere.
+    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+
+    // Lag en "samtale" med riktig personlighet
+    const chat = model.startChat({
+      history: [
+        { role: "user", parts: [{ text: systemPrompt }] },
+        { role: "model", parts: [{ text: "Ok, jeg er klar." }] }
+      ],
+      generationConfig: {
+        maxOutputTokens: 100,
+      },
+    });
+
+    // Send den nye meldingen fra eleven til AI-en
+    const result = await chat.sendMessage(melding);
+    const response = await result.response;
+    const aiSvar = response.text();
+
+    // Send svaret fra AI-en tilbake til "Ansiktet"
+    res.status(200).json({ svar: aiSvar });
 
   } catch (error) {
-    console.error("Feil ved listing av modeller:", error);
-    // Send selve feilmeldingen tilbake så vi kan se den
-    res.status(500).json({ svar: `Klarte ikke hente modeller: ${error.message}` });
+    console.error(error);
+    res.status(500).json({ error: "Noe gikk galt med AI-en" });
   }
 };
